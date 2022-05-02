@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+    'location_field.apps.DefaultConfig',
+    'phonenumber_field',
+
     'managemenet',
     'srapper',
 ]

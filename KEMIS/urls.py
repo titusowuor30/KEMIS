@@ -22,6 +22,11 @@ from managemenet.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',home,name='home')
+    #waste management
+    path('',home_view.as_view(),name='home'),
+    path('add-industry/',add_industry.as_view(),name='add-industry'),
+    path('view-company/',company_view.as_view(),name='view-industry'),
+    path('result/',result_view.as_view(),name='result'),
+     
 ]
 urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
