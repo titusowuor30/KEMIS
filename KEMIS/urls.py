@@ -27,6 +27,8 @@ urlpatterns = [
     path('add-industry/',add_industry.as_view(),name='add-industry'),
     path('view-company/',company_view.as_view(),name='view-industry'),
     path('result/',result_view.as_view(),name='result'),
+    path('auth',include('authentication.urls')),
+    path('match-companies/<int:id>/',MatchListView,name="recycle")
      
 ]
 urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

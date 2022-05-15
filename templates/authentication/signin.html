@@ -1,0 +1,73 @@
+{% extends 'authentication/base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" type="text/css" href="{% static 'styles/authentication/main.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'styles/authentication/signin.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-sm-6 d-none d-md-block">
+            <img src="{% static 'dist/img/kemis-logo.jpg' %}" class="signin__phone float-right">
+        </div>
+        <div class="col-sm-6 my-auto">
+            <div class="">
+                <div class="text-center card px-5 mr-md-auto signin__card">
+                    <img src="{% static 'dist/img/kemis-logo.jpg' %}" class="brand-image img-circle elevation-3"
+                    style="opacity: 0.8">
+                    <div class="signin">
+                        <div class="signin__form mb-3">
+                            {% if messages %}
+                                {% for message in messages %}
+                                <div class="alert alert-danger" role='alert'>
+                                    {{ message }}
+                                </div>
+                                {% endfor %}
+                            {% endif %}
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="my-1 form__input">
+                                    <input id="id_email_username" type="text" name="email_username" placeholder="Email or Username">
+                                </div>
+                                <div class="my-1 form__input">
+                                    <input id="id_password" type="password" name="password" placeholder="Password">
+                                </div>
+                                <div class="my-4 mx-auto text-center">
+                                    <button class="badge badge-success badge-pill">Sign in</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="text-center my-4">
+                            <p class="or__text">OR</p>
+                        </div>
+                        <div class="my-1 mx-auto text-center">
+                            <a class="login__fb__text text-decoration-none badge badge-secondary badge-pill" href="">Log in with facebook <i class="fas fa-facebook"></i></a>
+                        </div>
+                        <div class="mb-4">
+                            <a class="forogt__password text-decoration-none" href="{% url 'password_reset' %}">Forgot password?</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center card mt-2 px-5 mr-md-auto signin__card">
+                    <p class="have__an__account py-3">Don't have an account? <a href="{% url 'signup_view' %}" class="text-decoration-none">Sign up</a></p>
+                </div>
+                <div class="text-center mt-2 px-5 mr-auto get__app">
+                    <p class="">Get the app.</p>
+                    <div class="row">
+                        <div class="col-6">
+                            <img src="{% static 'img/appstore.png' %}" class="app__download__img img-fluid">
+                        </div>
+                        <div class="col-6">
+                            <img src="{% static 'img/playstore.png' %}" class="app__download__img img-fluid">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

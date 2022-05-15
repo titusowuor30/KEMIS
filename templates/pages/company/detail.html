@@ -8,12 +8,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Project Detail</h1>
+            <h1 class="badge badge-pill badge-success"><i class="fas fa-recycle"> Smart Recycle</i></h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Project Detail</li>
+              <li class="breadcrumb-item active">Matched Companies</li>
             </ol>
           </div>
         </div>
@@ -26,7 +26,7 @@
       <!-- Default box -->
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Projects Detail</h3>
+          <h3 class="card-title">Smart Waste Recyle</h3>
 
           <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
@@ -40,128 +40,148 @@
             <div class="col-12 col-md-12 col-lg-8 order-2 order-md-1">
               <div class="row">
                 <div class="col-12 col-sm-4">
-                  <div class="info-box bg-light">
+                  <div class="info-box bg-warning">
                     <div class="info-box-content">
-                      <span class="info-box-text text-center text-muted">Estimated budget</span>
-                      <span class="info-box-number text-center text-muted mb-0">2300</span>
+                      <span class="info-box-text text-center text-muted">Waste Products</span>
+                      {% for waste in data.user_wastes %}
+                      <span class="info-box-number text-center text-muted mb-4 mt-2">- {{waste.name}}</span>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-4">
+                  <div class="info-box bg-secondary">
+                    <div class="info-box-content">
+                      {% if data.matchmatching_industries %}
+                      <span class="info-box-text text-center ">Matching Inputs</span>
+                      <ul>
+                        {% for value in data.matchmatching_industries %}
+                      <li class="info-box-number text-center mb-0"><span class="badge badge-pill badge-primary">{{value.inputs__name}}</span> - <span class="badge badge-pill badge-info">{{value.name}}</span></li>
+                      {% endfor %}
+                      </ul>
+                      {% else %}
+                      <span class="info-box-text text-center">No Matching Inputs yet! <br /> Check back in a few hours</span>
+                      {% endif %}
                     </div>
                   </div>
                 </div>
                 <div class="col-12 col-sm-4">
                   <div class="info-box bg-light">
-                    <div class="info-box-content">
-                      <span class="info-box-text text-center text-muted">Total amount spent</span>
-                      <span class="info-box-number text-center text-muted mb-0">2000</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-12 col-sm-4">
-                  <div class="info-box bg-light">
-                    <div class="info-box-content">
-                      <span class="info-box-text text-center text-muted">Estimated project duration</span>
-                      <span class="info-box-number text-center text-muted mb-0">20 <span>
+                    <div class="info-box-content mb-4">
+                      <span class="info-box-text text-center text-muted">Recycle Method</span>
+                      {% for waste in data.user_wastes %}<span class="info-box-number text-center text-muted mb-0">
+                        {{waste.name}} - {{waste.reuse_plan}}(KShs.{{waste.price}})<span>{% endfor %}
                     </div>
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col-12">
-                  <h4>Recent Activity</h4>
-                    <div class="post">
-                      <div class="user-block">
-                        <img class="img-circle img-bordered-sm" src="../../dist/img/user1-128x128.jpg" alt="user image">
-                        <span class="username">
-                          <a href="#">Jonathan Burke Jr.</a>
-                        </span>
-                        <span class="description">Shared publicly - 7:45 PM today</span>
-                      </div>
-                      <!-- /.user-block -->
-                      <p>
-                        Lorem ipsum represents a long-held tradition for designers,
-                        typographers and the like. Some people hate it and argue for
-                        its demise, but others ignore.
-                      </p>
-
-                      <p>
-                        <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 1 v2</a>
-                      </p>
-                    </div>
-
+                  <h4>Action Area</h4>
+                  <p> Hi {{request.user.username}}, would like to take an action on your waste?</p>
+                  {% for waste in data.user_wastes %}
                     <div class="post clearfix">
                       <div class="user-block">
-                        <img class="img-circle img-bordered-sm" src="../../dist/img/user7-128x128.jpg" alt="User Image">
+                        {% if waste.image %}
+                        <img class="img-circle img-fluid" src="{{waste.image.url}}" alt="user image">
+                        {% else %}
+                        <img class="img-circle img-fluid fa-bookmark-o" src="{% static 'dist/img/kemis-logo.jpg' %}" alt="">
+                        {% endif %}
                         <span class="username">
-                          <a href="#">Sarah Ross</a>
+                          <a href="#">{{waste.reuse_plan}}.</a>
                         </span>
-                        <span class="description">Sent you a message - 3 days ago</span>
+                        <span class="description">{{waste.reuse_plan}} waste</span>
                       </div>
                       <!-- /.user-block -->
                       <p>
-                        Lorem ipsum represents a long-held tradition for designers,
-                        typographers and the like. Some people hate it and argue for
-                        its demise, but others ignore.
-                      </p>
-                      <p>
-                        <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 2</a>
-                      </p>
-                    </div>
-
-                    <div class="post">
-                      <div class="user-block">
-                        <img class="img-circle img-bordered-sm" src="../../dist/img/user1-128x128.jpg" alt="user image">
-                        <span class="username">
-                          <a href="#">Jonathan Burke Jr.</a>
-                        </span>
-                        <span class="description">Shared publicly - 5 days ago</span>
-                      </div>
-                      <!-- /.user-block -->
-                      <p>
-                        Lorem ipsum represents a long-held tradition for designers,
-                        typographers and the like. Some people hate it and argue for
-                        its demise, but others ignore.
-                      </p>
-
-                      <p>
-                        <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 1 v1</a>
+                      You can <span class="font-weight-bold">{{waste.reuse_plan}}</span> your wastes, <span class="font-weight-bold"> "{{waste.name}}",</span> to the following suggested companies:-<br />
+                       {% if data.matchmatching_industries %}
+                       {% for value in data.matchmatching_industries %}
+                       #{{forloop.counter}}. <a href="#" class="my-4">{{value.name}} <span class="badge badge-pill badge-primary">{{waste.reuse_plan}}</span></a><br />
+                       {% endfor %}
+                       {% else %}
+                       <span class="info-box-text font-weight-bolder font-italic text-info">No Matching Inputs yet! Check back in a few hours</span>
+                       {% endif %}
                       </p>
                     </div>
+                    {% endfor%}
                 </div>
               </div>
             </div>
-            <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
-              <h3 class="text-primary"><i class="fas fa-paint-brush"></i> AdminLTE v3</h3>
-              <p class="text-muted">Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua butcher retro keffiyeh dreamcatcher synth. Cosby sweater eu banh mi, qui irure terr.</p>
-              <br>
-              <div class="text-muted">
-                <p class="text-sm">Client Company
-                  <b class="d-block">Deveint Inc</b>
-                </p>
-                <p class="text-sm">Project Leader
-                  <b class="d-block">Tony Chicken</b>
-                </p>
+            <div class="col-12 col-md-12 col-lg-4 order-1 order-md-1">
+              <h3 class="text-primary"><i class="fas fa-book"></i> Company History</h3>
+              <div class="row">
+               {% if data.user_industries %}
+                <div class="text-muted">
+                  <p class="text-sm">Company Intro
+                    <b class="d-block">{{data.user_industries.name}}</b>
+                  </p>
+                </div>
+                </div>
+                <div class="text-muted">
+                  <p class="text-sm">About Company<br/>
+                    Location:<b class="d-block">{{data.user_industries.location}}</b>
+                    Email:<b class="d-block">{{data.user_industries.email}}</b>
+                  </p>
+                  <p class="text-sm">Description
+                    <b class="d-block">{{data.user_industries.description}}</b>
+                  </p>
+                </div>
+                <div class="text-muted">
+                  <p class="text-sm">Raw Materials
+                    {% for input in data.user_inputs %}
+                    <b class="d-block">-{{input.name}}</b>
+                    {% endfor %}
+                  </p>
+                </div>
+                <div class="text-muted">
+                  <p class="text-sm">Waste Products
+                    {% for waste in data.user_wastes %}
+                    <b class="d-block">-{{waste.name}}</b>
+                    {% endfor %}
+                  </p>
+                </div>
               </div>
-
-              <h5 class="mt-5 text-muted">Project files</h5>
-              <ul class="list-unstyled">
-                <li>
-                  <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-word"></i> Functional-requirements.docx</a>
-                </li>
-                <li>
-                  <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-pdf"></i> UAT.pdf</a>
-                </li>
-                <li>
-                  <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-envelope"></i> Email-from-flatbal.mln</a>
-                </li>
-                <li>
-                  <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-image "></i> Logo.png</a>
-                </li>
-                <li>
-                  <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-word"></i> Contract-10_12_2014.docx</a>
-                </li>
-              </ul>
-              <div class="text-center mt-5 mb-3">
-                <a href="#" class="btn btn-sm btn-primary">Add files</a>
-                <a href="#" class="btn btn-sm btn-warning">Report contact</a>
+            </div>
+            {% else %}
+             <span class="info-box-text font-weight-bolder font-italic text-info">No company history yet!</span>
+             {% endif %}
+          </div>
+              <div class="col-12 col-md-12 col-lg-4 order-1 order-md-1">
+                <h3 class="text-primary"><i class="fas fa-book"></i>Related Industry History</h3>
+                <div class="row">
+                  {% if data.matchmatching_industries %}
+                  {% for value in data.matchmatching_industries %}
+                  <div class="col-12 col-sm-4">
+                    <div class="text-muted">
+                      <h5 class="font-weight-bolder text-capitalize">Company {{forloop.counter}} Intro
+                      </h5>
+                      <b class="d-block">{{value.name}}</b>
+                    </div>
+                    <div class="text-muted">
+                      <p class="text-sm">About Company<br/>
+                        Location:<b class="d-block">{{value.location}}</b>
+                        Email:<b class="d-block">{{value.email}}</b>
+                      </p>
+                      <p class="text-sm">Description
+                        <b class="d-block">{{value.description}}</b>
+                      </p>
+                    </div>
+                    <div class="text-muted">
+                      <p class="text-sm">Raw Materials
+                        <b class="d-block">-{{value.inputs__name}}</b>
+                      </p>
+                    </div>
+                    <div class="text-muted">
+                      <p class="text-sm">Waste Products
+                        <b class="d-block">-{{value.wasteproducts__name}}</b>
+                      </p>
+                    </div>
+                  </div>  
+                {% endfor %}
+               {% else %}
+               <span class="info-box-text font-weight-bolder font-italic text-info">No company history yet!</span>
+               {% endif %}
               </div>
             </div>
           </div>

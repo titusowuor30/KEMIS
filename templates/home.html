@@ -29,7 +29,7 @@
             <div class="card">
               <div class="card-header border-0">
                 <div class="d-flex justify-content-between">
-                  <h3 class="card-title">Online Store Visitors</h3>
+                  <h3 class="card-title">Site Visitors</h3>
                   <a href="javascript:void(0);">View Report</a>
                 </div>
               </div>
@@ -84,80 +84,37 @@
                     <th>#Title</th>
                     <th>Price</th>
                     <th>Sales</th>
+                    <th>In Stock</th>
                     <th>More</th>
                   </tr>
                   </thead>
                   <tbody>
+                    {% for waste in wastes %}
                   <tr>
                     <td>
-                      <img src="dist/img/default-150x150.png" alt="Product 1" class="img-circle img-size-32 mr-2">
-                      Some Product
+                      {% if waste.image %}
+                      <img src="{{waste.image.url}}" alt="Product 1" class="img-circle img-size-32 mr-2">
+                      {% else %}
+                      <img src="{% static 'dist/img/kemis-logo.jpg' %}" alt="Product 1" class="img-circle img-size-32 mr-2">
+                      {% endif %}
+                     {{waste.name}}
+                      <span class="badge bg-success">
+                        NEW
+                      </span>
                     </td>
-                    <td>$13 USD</td>
-                    <td>
-                      <small class="text-success mr-1">
-                        <i class="fas fa-arrow-up"></i>
-                        12%
-                      </small>
-                      12,000 Sold
-                    </td>
-                    <td>
-                      <a href="#" class="text-muted">
-                        <i class="fas fa-search"></i>
-                      </a>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <img src="dist/img/default-150x150.png" alt="Product 1" class="img-circle img-size-32 mr-2">
-                      Another Product
-                    </td>
-                    <td>$29 USD</td>
-                    <td>
-                      <small class="text-warning mr-1">
-                        <i class="fas fa-arrow-down"></i>
-                        0.5%
-                      </small>
-                      123,234 Sold
-                    </td>
-                    <td>
-                      <a href="#" class="text-muted">
-                        <i class="fas fa-search"></i>
-                      </a>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <img src="dist/img/default-150x150.png" alt="Product 1" class="img-circle img-size-32 mr-2">
-                      Amazing Product
-                    </td>
-                    <td>$1,230 USD</td>
+                    <td>KShs.{{waste.price}}</td>
                     <td>
                       <small class="text-danger mr-1">
                         <i class="fas fa-arrow-down"></i>
-                        3%
+                        0%
                       </small>
-                      198 Sold
+                      0 Sold
                     </td>
-                    <td>
-                      <a href="#" class="text-muted">
-                        <i class="fas fa-search"></i>
-                      </a>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <img src="dist/img/default-150x150.png" alt="Product 1" class="img-circle img-size-32 mr-2">
-                      Perfect Item
-                      <span class="badge bg-danger">NEW</span>
-                    </td>
-                    <td>$199 USD</td>
                     <td>
                       <small class="text-success mr-1">
                         <i class="fas fa-arrow-up"></i>
-                        63%
                       </small>
-                      87 Sold
+                      1 Available
                     </td>
                     <td>
                       <a href="#" class="text-muted">
@@ -165,6 +122,7 @@
                       </a>
                     </td>
                   </tr>
+                  {% endfor %}
                   </tbody>
                 </table>
               </div>
@@ -184,7 +142,7 @@
                 <div class="d-flex">
                   <p class="d-flex flex-column">
                     <span class="text-bold text-lg">$18,230.00</span>
-                    <span>Sales Over Time</span>
+                    <span>Sales of waste Over Time</span>
                   </p>
                   <p class="ml-auto d-flex flex-column text-right">
                     <span class="text-success">
@@ -214,7 +172,7 @@
 
             <div class="card">
               <div class="card-header border-0">
-                <h3 class="card-title">Online Store Overview</h3>
+                <h3 class="card-title">Site Overview</h3>
                 <div class="card-tools">
                   <a href="#" class="btn btn-sm btn-tool">
                     <i class="fas fa-download"></i>
@@ -233,7 +191,7 @@
                     <span class="font-weight-bold">
                       <i class="ion ion-android-arrow-up text-success"></i> 12%
                     </span>
-                    <span class="text-muted">CONVERSION RATE</span>
+                    <span class="text-muted">WASTE MATCH RATE</span>
                   </p>
                 </div>
                 <!-- /.d-flex -->
@@ -243,7 +201,7 @@
                   </p>
                   <p class="d-flex flex-column text-right">
                     <span class="font-weight-bold">
-                      <i class="ion ion-android-arrow-up text-warning"></i> 0.8%
+                      <i class="ion ion-android-arrow-up text-warning"></i> 1.8%
                     </span>
                     <span class="text-muted">SALES RATE</span>
                   </p>
@@ -255,7 +213,7 @@
                   </p>
                   <p class="d-flex flex-column text-right">
                     <span class="font-weight-bold">
-                      <i class="ion ion-android-arrow-down text-danger"></i> 1%
+                      <i class="ion ion-android-arrow-down text-danger"></i> 48%
                     </span>
                     <span class="text-muted">COMPANY REGISTRATION RATE</span>
                   </p>
@@ -280,3 +238,10 @@
   </aside>
   <!-- /.control-sidebar -->
 {% endblock content %}
+{% block pagescripts %}
+<script>
+  document.ready(){
+    alert("Test home");
+  }
+</script>
+{% endblock pagescripts %}
