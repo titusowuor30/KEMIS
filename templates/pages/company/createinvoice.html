@@ -1,0 +1,207 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1>Generate Invoice</h1>
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item">
+                  <a href="#">Recycle</a>
+                </li>
+                <li class="breadcrumb-item active">Invoice</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <!-- /.container-fluid -->
+      </section>
+      <!-- general form elements disabled -->
+      <div class="card card-warning">
+        <div class="card-header">
+          <h3 class="card-title">{{data.recycle_plan}} Your Waste</h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+          <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-sm-6">
+                <!-- text input -->
+                <div class="form-group">
+                  <label>Invoice No.</label>
+                  <input
+                    type="text"
+                    name="invoice_id"
+                    class="form-control"
+                    placeholder=""
+                    value="{{data.invoice_id}}"
+                    disabled
+                  />
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>Mass</label>
+                  <input
+                    type="number"
+                    name="mass"
+                    class="form-control"
+                    placeholder="300KG"
+                  />
+                  <span class="help-block"
+                    >Enter weight(KG) if applicable.</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <!-- text input -->
+                <div class="form-group">
+                  <label>Cost.</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    name="amount"
+                    id="cost"
+                    placeholder=""
+                    value="{{data.amount}}"
+                    disabled
+                  />
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>Transport cost</label>
+                  <input
+                    type="number"
+                    id="transportcost"
+                    class="form-control"
+                    placeholder="30.00"
+                    onchange="calcTotal"
+                    name="trcost"
+                  />
+                  <span class="help-block"
+                    >If applicable otherwise fill with zero or leave
+                    blank.</span
+                  >
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>Total Estimated Cost</label>
+                  <input
+                    class="form-control"
+                    id="total"
+                    placeholder="0.00"
+                    type="number"
+                    name="total"
+                    disabled
+                  />
+                  <p class="help-block" id="result"></p>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <!-- textarea -->
+                <div class="form-group">
+                  <label>Description</label>
+                  <textarea
+                    class="form-control"
+                    name="message"
+                    rows="2"
+                    placeholder="Enter ..."
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <!-- checkbox -->
+                <div class="form-group">
+                  <div class="form-check">
+                    <p class="text-black-50">Slect Preferd Payment Method</p>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="mpesa" value="Mpesa" checked />
+                    <label class="form-check-label">Mpesa</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" {% if object.delivered %} checked {% endif %} name="cash" value="Cash" />
+                    <label class="form-check-label">Cash</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" disabled />
+                    <label class="form-check-label">PayPal</label>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <!-- checkbox -->
+                <div class="form-group">
+                  <div
+                    class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success"
+                  >
+                    <input
+                      type="checkbox"
+                      class="custom-control-input"
+                      id="customSwitch1"
+                      name="sms"
+                    />
+                    <label class="custom-control-label" for="customSwitch1"
+                      >Send SMS Notification</label
+                    >
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div
+                    class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success"
+                  >
+                    <input
+                      type="checkbox"
+                      class="custom-control-input"
+                      id="customSwitch2"
+                      name="email"
+                      checked
+                    />
+                    <label class="custom-control-label" for="customSwitch2"
+                      >Send Email Notification</label
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row no-print">
+              <div class="col-12">
+                <button type="submit" class="btn btn-success float-right" />
+                  <i class="far fa-credit-card"></i> Submit Request
+              </button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <!-- /.card-body -->
+      </div>
+      <!-- /.card -->
+    </div>
+  </section>
+</div>
+{% endblock content %} {% block pagescripts %}
+<!-- Page specific script -->
+<script>
+  const cost = Number(document.querySelector("#cost").value);
+  const trcost = document.querySelector("#transportcost");
+  const result = document.querySelector("#total");
+  result.value = cost;
+  trcost.addEventListener("input", function () {
+    result.value = Number(this.value) + cost;
+  });
+</script>
+{% endblock pagescripts %}

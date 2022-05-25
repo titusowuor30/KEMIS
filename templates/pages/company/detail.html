@@ -97,7 +97,7 @@
                       You can <span class="font-weight-bold">{{waste.reuse_plan}}</span> your wastes, <span class="font-weight-bold"> "{{waste.name}}",</span> to the following suggested companies:-<br />
                        {% if data.matchmatching_industries %}
                        {% for value in data.matchmatching_industries %}
-                       #{{forloop.counter}}. <a href="#" class="my-4">{{value.name}} <span class="badge badge-pill badge-primary">{{waste.reuse_plan}}</span></a><br />
+                       #{{forloop.counter}}. <a href="{% url 'create_invoice' data.id value.id waste.id %}" class="my-4">{{value.name}} <span class="badge badge-pill badge-primary">{{waste.reuse_plan}}</span></a><br />
                        {% endfor %}
                        {% else %}
                        <span class="info-box-text font-weight-bolder font-italic text-info">No Matching Inputs yet! Check back in a few hours</span>

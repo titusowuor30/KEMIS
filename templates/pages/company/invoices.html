@@ -1,0 +1,147 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Invoice</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">Invoice</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <!-- /.container-fluid -->
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="callout callout-info">
+            <h5><i class="fas fa-info"></i> Note:</h5>
+            This page has been enhanced for printing. Click the print button at
+            the bottom of the invoice to test.
+          </div>
+
+          <!-- Main content -->
+          <div class="invoice p-3 mb-3">
+            <!-- Table row -->
+            <div class="row">
+              <div class="col-12 table-responsive">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Qty(KG)</th>
+                      <th>Invoice ID #</th>
+                      <th>Product</th>
+                      <th>Cost</th>
+                      <th>Transport</th>
+                      <th>Total</th>
+                      <th>Payment Method</th>
+                      <th>Status</th>
+                      <th>Delivered</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for object in object_list %}
+                    <tr>
+                      <td>{{object.weight}}</td>
+                      <td>{{object.invoice_id}}</td>
+                      <td>{{object.waste.name}}</td>
+                      <td>{{object.amount}}</td>
+                      <td>{{object.transportation}}</td>
+                      <td>{{object.get_total_amount}}</td>
+                      <td>{{object.payment_method}}</td>
+                      <td>
+                          {% if object.status == 'Pending' %}
+                        <span
+                          class="badge badge-pill badge-danger"
+                          >{{object.status}}</span
+                        >
+                        {% elif object.status == 'Paid' %}
+                         <span
+                          class="badge badge-pill badge-success"
+                          >{{object.status}}</span
+                        >
+                        {% else %}
+                         <span
+                          class="badge badge-pill badge-warning"
+                          >{{object.status}}</span
+                        >
+                        {% endif %}
+                      </td>
+                      <td>
+                        <input
+                          type="checkbox"
+                          class="form-check-input m-auto ml-5" {% if object.delivered %}checked{%endif%}
+                        />
+                      </td>
+                      <td>
+                        <a class="list-link badge badge-secondary" href="#"
+                          ><i class="far fa-eye"></i
+                        ></a>
+                        <a
+                          class="list-link badge badge-danger d-inline"
+                          href="#"
+                          ><i class="far fa-trash-alt"></i
+                        ></a>
+                        <form class="d-inline">
+                          <a class="list-link badge badge-warning {% if object.status == 'Paid' %} d-none {% endif %}" href="#"
+                            ><i class="fa fa-times"></i>
+                            <span class="tooltiptext">Reject</span></a
+                          >
+                        </form>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.col -->
+            </div>
+            <!-- /.row -->
+            <!-- this row will not appear when printing -->
+            <div class="row no-print">
+              <div class="col-12">
+                <a
+                  href="{% url 'invoices' %}"
+                  id="print"
+                  rel="noopener"
+                  target="_blank"
+                  class="btn btn-default"
+                  ><i class="fas fa-print"></i> Print</a
+                >
+                <button
+                  type="button"
+                  class="btn btn-primary float-right"
+                  style="margin-right: 5px"
+                >
+                  <i class="fas fa-download"></i> Generate PDF
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- /.invoice -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+{% endblock content %} {% block pagescripts %}
+<!-- Page specific script -->
+<script>
+  document.querySelector("#print").addEventListener("click", window.print());
+</script>
+{% endblock pagescripts %}

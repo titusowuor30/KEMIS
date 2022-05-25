@@ -8,7 +8,7 @@
         <div class="col-sm-6 d-flex flex-row">
           <h1 class="mr-5">Industries/Companies</h1>
           <a href="{% url 'add-industry' %}" class="btn btn-primary"
-            ><i class="fas fa-plus-circle m-1">Add New</i></a
+            ><i class="fas fa-plus-circle m-1">Register Company</i></a
           >
         </div>
         <div class="col-sm-6">
@@ -89,7 +89,10 @@
                 <span class="badge badge-warning">In Progress</span>
               </td>
               <td class="project-actions text-right">
-                <a class="btn btn-primary btn-sm" href="{% url 'recycle' industry.id  %}">
+                <a
+                  class="btn btn-primary btn-sm"
+                  href="{% url 'recycle' industry.id  %}"
+                >
                   <i class="fas fa-circle-notch text-warning"> </i>
                   Initiate Smart Waste Recycle
                 </a>

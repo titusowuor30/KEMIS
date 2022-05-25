@@ -14,21 +14,25 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,include
-from django.conf.urls.static import static #this is needed for file and image upload
+from django.urls import path, include
+# this is needed for file and image upload
+from django.conf.urls.static import static
 from django.conf import settings
 from managemenet.views import *
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    #waste management
-    path('',home_view.as_view(),name='home'),
-    path('add-industry/',add_industry.as_view(),name='add-industry'),
-    path('view-company/',company_view.as_view(),name='view-industry'),
-    path('result/',result_view.as_view(),name='result'),
-    path('auth',include('authentication.urls')),
-    path('match-companies/<int:id>/',MatchListView,name="recycle")
-     
+    # waste management
+    path('', home_view.as_view(), name='home'),
+    path('add-industry/', add_industry.as_view(), name='add-industry'),
+    path('view-company/', company_view.as_view(), name='view-industry'),
+    path('result/', result_view.as_view(), name='result'),
+    path('auth', include('authentication.urls')),
+    path('match-companies/<int:id>/', MatchListView, name="recycle"),
+    path('recycle/<int:current_companyid>/<int:matching_companyid>/<int:waste_id>/',
+         CreateInvoice, name='create_invoice'),
+    path("invoices/", invoiceListView, name='invoices')
+
 ]
-urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

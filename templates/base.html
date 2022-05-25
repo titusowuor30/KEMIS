@@ -83,17 +83,32 @@
       rel="stylesheet"
       href="{% static 'plugins/dropzone/min/dropzone.min.css' %}"
     />
+    <style>
+      .tooltip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted black;
+      }
+
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: black;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+
+        /* Position the tooltip */
+        position: absolute;
+        z-index: 1;
+      }
+
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+      }
+    </style>
   </head>
-  <!--
-BODY TAG OPTIONS:
-=================
-Apply one or more of the following classes to to the body tag
-to get the desired effect
-|---------------------------------------------------------|
-|LAYOUT OPTIONS | sidebar-collapse                        |
-|               | sidebar-mini                            |
-|---------------------------------------------------------|
--->
   <body class="hold-transition sidebar-mini">
     <div class="wrapper">
       <!-- Navbar -->
@@ -353,12 +368,9 @@ to get the desired effect
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a
-                      href="pages/layout/top-nav-sidebar.html"
-                      class="nav-link"
-                    >
+                    <a href="{% url 'invoices' %}" class="nav-link">
                       <i class="far fa-circle nav-icon"></i>
-                      <p>Donate to other company</p>
+                      <p>Invoices</p>
                     </a>
                   </li>
                   <li class="nav-item">

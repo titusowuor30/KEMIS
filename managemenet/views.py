@@ -1,61 +1,98 @@
 from urllib import request
 from django.http import HttpResponseRedirect
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from django.views import View
-from django.db.models import  Q
+from django.db.models import Q
 from .forms import *
 from django.utils import timezone
 from django.views.generic.list import ListView
+import secrets
+invoice_id = ""
 
 
 class home_view(View):
     def get(self, request):
         if request.user.is_authenticated:
-           return render(request,'home.html')
+            return render(request, 'home.html')
         else:
             return redirect('signin_view')
+
+
+def invoiceListView(request):
+    try:
+        matching_company = request.user.industries.all()[0]
+        print(matching_company)
+    except Exception as e:
+        print(e)
+    for object in waste_invoice.objects.all():
+        if request.user == object.created_by:
+            print(object.created_by)
+            obj = waste_invoice.objects.filter(created_by=request.user)
+            print(obj)
+            return render(request, "pages/company/invoices.html", {"object_list": obj})
+        else:
+            obj = waste_invoice.objects.filter(companyB=matching_company)
+        return render(request, "pages/company/invoices.html", {"object_list": obj})
+
 
 class company_view(View):
     def get(self, request):
         if request.user.is_superuser:
-           industries=Industry.objects.all()
-        else:   
-            industries=Industry.objects.all().filter(user=request.user)   
-        return render(request,'pages/company/list.html',{'industries':industries})
-    
+            industries = Industry.objects.all()
+        else:
+            industries = Industry.objects.all().filter(user=request.user)
+        return render(request, 'pages/company/list.html', {'industries': industries})
+
+
 class result_view(View):
     def get(self, request):
-        return render(request,'pages/result/success.html')    
+        return render(request, 'pages/result/success.html')
 
 
 class add_industry(View):
     form_class = add_company
+    waste_form = addWasteForm
+    inputs_form = inputsForm
     initial = {'key': 'value'}
     template_name = 'pages/company/add.html'
 
     def get(self, request, *args, **kwargs):
         data = {}
         form = self.form_class(initial=self.initial)
-        data['inputs']=Input.objects.all()
-        data['wastes']=WasteProduct.objects.all()
-        return render(request, self.template_name, {'form': form,'data':data})
+        add_waste_form = self.waste_form(initial=self.initial)
+        addinputs_form = self.inputs_form(initial=self.initial)
+        data['inputs'] = Input.objects.all()
+        data['wastes'] = WasteProduct.objects.all()
+        return render(request, self.template_name, {'form': form, 'addinputs_form': addinputs_form, 'add_waste_form': add_waste_form, 'data': data})
 
     def post(self, request, *args, **kwargs):
+        if "wasteform" in self.request.POST:
+            form = addWasteForm(self.request.POST, self.request.FILES)
+            print(self.request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('add-industry')
+        if "inputsform" in self.request.POST:
+            form = inputsForm(self.request.POST)
+            print(self.request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('add-industry')
         if not request.user.is_authenticated:
             return redirect('signin_view')
-        form = self.form_class(request.POST)
+        form = self.form_class(self.request.POST)
         print(form)
         if form.is_valid():
-           industry=form.save(commit=False)
-           industry.user=request.user
-           industry.save()
-           inputsearchkeys=self.request.POST.getlist('inputs')
-           wastesearchkeys = self.request.POST.getlist('wastes')
-           myval=''
-           myval2=''
-           i=0
-           for j in range(0, len(wastesearchkeys)):
-              for i in range(0,len(inputsearchkeys)):
+            industry = form.save(commit=False)
+            industry.user = request.user
+            industry.save()
+            inputsearchkeys = self.request.POST.getlist('inputs')
+            wastesearchkeys = self.request.POST.getlist('wastes')
+            myval = ''
+            myval2 = ''
+            i = 0
+            for j in range(0, len(wastesearchkeys)):
+                for i in range(0, len(inputsearchkeys)):
                     print(wastesearchkeys)
                     myval2 = wastesearchkeys[j]
                     print(myval2)
@@ -64,36 +101,86 @@ class add_industry(View):
                     industry.save()
                     print(selectedwaste2)
                     print(inputsearchkeys)
-                    myval=inputsearchkeys[i]
+                    myval = inputsearchkeys[i]
                     print(myval)
-                    selectedinput=Input.objects.get(name=myval)
+                    selectedinput = Input.objects.get(name=myval)
                     industry.inputs.add(selectedinput)
                     industry.save()
                     print(selectedinput)
-           # <process form cleaned data>
-           return HttpResponseRedirect('/result/')
+            # <process form cleaned data>
+            return HttpResponseRedirect('/result/')
         return render(request, self.template_name, {'form': form})
-    
 
-def MatchListView(request,id):
+
+def MatchListView(request, id):
     data = {}
+    user_industry_id = id
     user_industries = Industry.objects.get(id=id)
-    data['user_industries']=user_industries
-    loggeduser_wastes=user_industries.wasteproducts.all()
-    user_inputs=user_industries.inputs.all()
-    matchmatching_industries=[]
-    user_wastes=[]
-    #matched_inputs=[]
+    data['user_industries'] = user_industries
+    loggeduser_wastes = user_industries.wasteproducts.all()
+    user_inputs = user_industries.inputs.all()
+    matchmatching_industries = []
+    user_wastes = []
+    # matched_inputs=[]
     for waste in loggeduser_wastes:
-        industry=Industry.objects.filter(Q(inputs__name__icontains=waste.name) | Q(inputs__description__icontains=waste.description)).values('id','name','location','email','description','inputs__name','inputs__description','wasteproducts__name')
+        industry = Industry.objects.filter(Q(inputs__name__icontains=waste.name) | Q(inputs__description__icontains=waste.description)).values(
+            'id', 'name', 'location', 'email', 'description', 'inputs__id', 'inputs__name', 'inputs__description', 'wasteproducts__id', 'wasteproducts__name', 'wasteproducts__description')
         matchmatching_industries.append(industry)
-        user_wastes.append({'name':waste.name,'reuse_plan':waste.reuse_plan,'price':waste.price,'image':waste.image})
-    data['matchmatching_industries']=matchmatching_industries[0]
-    data['user_wastes']=user_wastes
-    data['user_inputs']=user_inputs
-   
+        user_wastes.append({'id': waste.id, 'name': waste.name, 'reuse_plan': waste.reuse_plan,
+                           'price': waste.price, 'image': waste.image})
+    data['matchmatching_industries'] = matchmatching_industries[0]
+    data['user_wastes'] = user_wastes
+    data['user_inputs'] = user_inputs
+    data['id'] = user_industry_id
+
     print(user_industries)
     print(user_wastes)
     print(matchmatching_industries)
-    #print(matched_inputs)
-    return render(request, 'pages/company/detail.html', {'data':data}) 
+    print(data['id'])
+    return render(request, 'pages/company/detail.html', {'data': data})
+
+
+def CreateInvoice(request, current_companyid, matching_companyid, waste_id):
+    data = {}
+    global invoice_id
+    invoice_id = secrets.token_hex(nbytes=8).upper()
+    print(invoice_id)
+    current_user_company = request.user.industries.get(id=current_companyid)
+    matching_company = Industry.objects.get(id=matching_companyid)
+    data['current_company'] = current_user_company
+    data['matching_company'] = matching_company
+    waste = WasteProduct.objects.get(id=waste_id)
+    data['waste'] = WasteProduct.objects.get(id=waste_id)
+    data['invoice_id'] = invoice_id
+    data['amount'] = waste.price
+    data['recycle_plan'] = waste.reuse_plan
+    if request.method == 'POST':
+        invoice = waste_invoice()
+        invoice.invoice_id = invoice_id
+        invoice.created_by = request.user
+        invoice.companyA = current_user_company
+        invoice.companyB = matching_company
+        invoice.waste = waste
+        if request.POST.get("mass") == None or '':
+            invoice.weight = float(0)
+        else:
+            invoice.weight = float(request.POST.get("mass"))
+        if request.POST.get("trcost") == None or '':
+            invoice.transportation = float(1)
+        else:
+            invoice.transportation = float(request.POST.get("trcost"))
+        if request.POST.get("amount") == None or '':
+            invoice.amount = float(0)
+        else:
+            invoice.amount = float(request.POST.get("amount"))
+        invoice.payment_method = request.POST.get("mpesa")
+        invoice.message = request.POST.get("message")
+        invoice.save()
+        print(request.POST.get("amount"))
+        if request.POST.get("sms") != None:
+            print("SMS sent")
+        if request.POST.get("email") != None:
+            print("Email sent")
+        return redirect("invoices")
+
+    return render(request, 'pages/company/createinvoice.html', {'data': data})

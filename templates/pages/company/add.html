@@ -102,23 +102,27 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="form-group">
+                        <form method="POST" enctype='multipart/form-data'>
+                            {% csrf_token %}
+                            <div class="form-group">
                             <label for="inputClientCompany">Title</label>
-                            <input type="text" id="inputClientCompany" class="form-control">
+                             {{addinputs_form.name}}
                         </div>
+                        <input type="hidden" value="inputsform" name="inputsform">
                         <div class="form-group">
-                            <label for="inputDescription">Description</label>
-                            <textarea id="inputDescription" class="form-control" rows="4"></textarea>
+                            <label for="inputClientCompany">Description</label>
+                             {{addinputs_form.description}}
                         </div>
-                        <div class="form-group row">
-                            <div class="col-12">
-                                <a href="#" class="btn btn-secondary">Cancel</a>
-                                <input type="submit" value="Create Entry" class="btn btn-success float-right">
+                            <div class="form-group row">
+                                <div class="col-12">
+                                    <a href="#" class="btn btn-secondary">Cancel</a>
+                                    <input type="submit" value="Create Entry" class="btn btn-success float-right">
+                                </div>
                             </div>
-                        </div>
                         </form>
                         <!-- /.card-body -->
                     </div>
+                    <!-- /.card -->
                 </div>
                 <div class="card card-secondary">
                     <div class="card-header">
@@ -131,15 +135,33 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <form action="" method="">
+                        <form method="POST" enctype='multipart/form-data'>
+                            {% csrf_token %}
                             <div class="form-group">
-                                <label for="inputClientCompany">Title</label>
-                                <input type="text" id="inputClientCompany" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="inputDescription">Description</label>
-                                <textarea id="inputDescription" class="form-control" rows="4"></textarea>
-                            </div>
+                            <label for="inputClientCompany">Title</label>
+                             {{add_waste_form.name}}
+                        </div>
+                        <input type="hidden" value="wasteform" name="wasteform">
+                        <div class="form-group">
+                            <label for="inputClientCompany">Category</label>
+                            {{add_waste_form.category}}
+                        </div>
+                        <div class="form-group">
+                            <label for="inputClientCompany">Description</label>
+                             {{add_waste_form.description}}
+                        </div>
+                        <div class="form-group">
+                            <label for="inputClientCompany">Recycle Plan</label>
+                            {{add_waste_form.reuse_plan}}
+                        </div>
+                         <div class="form-group {% for name,value in add_waste_form.fields.reuse_plan.choices %}{% if value == 'Donate' %} d-none {% else %} d-block {% endif %}{% endfor %}">
+                            <label for="inputClientCompany">Price</label>
+                            {{add_waste_form.price}}
+                        </div>
+                         <div class="form-group">
+                            <label for="inputClientCompany">Image</label>
+                            {{add_waste_form.image}}
+                        </div>
                             <div class="form-group row">
                                 <div class="col-12">
                                     <a href="#" class="btn btn-secondary">Cancel</a>
@@ -160,6 +182,17 @@
 {% block pagescripts %}
 <!-- Page specific script -->
 <script>
+    function toggleField() {
+    var priceField = document.getElementById('pricefield');
+    priceField.className='form-control';
+    var reuseselect = document.getElementById('reuseplan');
+    if (reuseselect.innerHTML.value == 'Donate') {
+      priceField.className='d-none';
+    }
+    else {
+    priceField.className='form-control';
+    }
+  }
    $(function () {
      //Initialize Select2 Elements
      $('.select2').select2()
