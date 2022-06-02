@@ -80,7 +80,7 @@
                       <td>
                         <input
                           type="checkbox"
-                          class="form-check-input m-auto ml-5" {% if object.delivered %}checked{%endif%}
+                          class="form-check-input m-auto ml-5" {% if object.delivered %}checked{% endif %}
                         />
                       </td>
                       <td>
@@ -92,12 +92,14 @@
                           href="#"
                           ><i class="far fa-trash-alt"></i
                         ></a>
+                        {% if guest_user %}
                         <form class="d-inline">
                           <a class="list-link badge badge-warning {% if object.status == 'Paid' %} d-none {% endif %}" href="#"
                             ><i class="fa fa-times"></i>
                             <span class="tooltiptext">Reject</span></a
                           >
                         </form>
+                        {% endif %}
                       </td>
                     </tr>
                     {% endfor %}

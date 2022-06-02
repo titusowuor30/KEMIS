@@ -7,6 +7,7 @@ from .forms import *
 from django.utils import timezone
 from django.views.generic.list import ListView
 import secrets
+from django.contrib import messages
 invoice_id = ""
 
 
@@ -19,20 +20,31 @@ class home_view(View):
 
 
 def invoiceListView(request):
+    guest_user = True
+    obj={}
+    if len(request.user.industries.all()) < 1 and request.user.is_superuser:
+        obj=waste_invoice.objects.all()
+        return render(request, "pages/company/invoices.html", {"object_list": obj, 'guest_user': guest_user})
+    elif len(request.user.industries.all()) < 1 and not request.user.is_superuser:
+        return redirect("/")
     try:
         matching_company = request.user.industries.all()[0]
         print(matching_company)
     except Exception as e:
         print(e)
+    for item in waste_invoice.objects.all():
+        if request.user == item.created_by:
+            guest_user = False
+    print("Guest User => "+str(guest_user))
     for object in waste_invoice.objects.all():
         if request.user == object.created_by:
             print(object.created_by)
             obj = waste_invoice.objects.filter(created_by=request.user)
             print(obj)
-            return render(request, "pages/company/invoices.html", {"object_list": obj})
+            return render(request, "pages/company/invoices.html", {"object_list": obj, 'guest_user': guest_user})
         else:
             obj = waste_invoice.objects.filter(companyB=matching_company)
-        return render(request, "pages/company/invoices.html", {"object_list": obj})
+        return render(request, "pages/company/invoices.html", {"object_list": obj, 'guest_user': guest_user})
 
 
 class company_view(View):
