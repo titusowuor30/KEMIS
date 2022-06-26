@@ -156,6 +156,7 @@
                       class="custom-control-input"
                       id="customSwitch1"
                       name="sms"
+                      {% if nsettings %}{% if nsettings.send_sms %}checked{% endif %}{% endif %}
                     />
                     <label class="custom-control-label" for="customSwitch1"
                       >Send SMS Notification</label
@@ -171,7 +172,7 @@
                       class="custom-control-input"
                       id="customSwitch2"
                       name="email"
-                      checked
+                     {% if nsettings %}{% if nsettings.send_mail %}checked{% endif %}{% endif %}
                     />
                     <label class="custom-control-label" for="customSwitch2"
                       >Send Email Notification</label

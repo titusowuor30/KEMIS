@@ -1,0 +1,91 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1>System Settings</h1>
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item">
+                  <a href="#">System</a>
+                </li>
+                <li class="breadcrumb-item active">Settings</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <!-- /.container-fluid -->
+      </section>
+      <!-- general form elements disabled -->
+      <div class="card card-warning">
+        <div class="card-header">
+          <h3 class="card-title">Notification Settings</h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+          <form method="POST" enctype="multipart/form-data" action="{% url 'update_sys_settings' nsettingsid %}">
+            {% csrf_token %}
+              <div class="col-sm-6">
+                <!-- checkbox -->
+                <div class="form-group">
+                  <div
+                    class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success"
+                  >
+                    <input
+                      type="checkbox"
+                      class="custom-control-input"
+                      id="customSwitch1"
+                      name="send_sms"
+                       {% if nsettings %}{% if nsettings.send_sms %}checked{% endif %}{% endif %}
+                    />
+                    <label class="custom-control-label" for="customSwitch1"
+                      >Enable SMS Notifications</label
+                    >
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div
+                    class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success"
+                  >
+                    <input
+                      type="checkbox"
+                      class="custom-control-input"
+                      id="customSwitch2"
+                      name="send_mail"
+                       {% if nsettings %}{% if nsettings.send_mail %}checked{% endif %}{% endif %}
+                    />
+                    <label class="custom-control-label" for="customSwitch2"
+                      >Enable Email Notification</label
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="row no-print">
+              <div class="col-12">
+                <button type="submit" class="btn btn-success float-right" />
+                  <i class="far fa-credit-card"></i> Save Changes
+              </button>
+              </div>
+            </div>
+            </div>
+          </form>
+        </div>
+        <!-- /.card-body -->
+      </div>
+      <!-- /.card -->
+    </div>
+  </section>
+</div>
+{% endblock content %} {% block pagescripts %}
+<!-- Page specific script -->
+<script>
+  
+</script>
+{% endblock pagescripts %}

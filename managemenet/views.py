@@ -209,7 +209,7 @@ def CreateInvoice(request, current_companyid, matching_companyid, waste_id):
         receivers.append(invoicepayee.email)
         print(receivers)
         if request.POST.get("email") is not None:
-            send_email("New Invoice #ID {} from {} to {}".format(invoice_id,invoiceowner,invoicepayee), str(request.POST.get("message"))+"\n\nPlease login to WMS System to check the invoice.",receivers)
+            send_email("New Invoice #ID {} from {} to {}".format(invoice_id,invoiceowner,invoicepayee), str(request.POST.get("message"))+"\n\nPlease login to Waste Management System to check the invoice.",receivers)
         if request.POST.get("sms") is not None:
             sendSMS("New Invoice #ID {}".format(invoice_id), request.POST.get("message"))
         return redirect("invoices")
@@ -234,7 +234,7 @@ def reject_invoice(request, id):
     receivers.append(invoicepayee.email)
     print(receivers)
     send_email("Invoice Rejected", "Invoice ID #{} was Rejected by {} at {}".format(
-        invoice.invoice_id, invoice.companyB, timezone.now()), receivers)
+        invoice.invoice_id, invoice.companyB, timezone.now())+"\n\nPlease login to Waste Management System to check the invoice.", receivers)
     return redirect("invoices")
 
 def delete_invoice(request,id):
@@ -258,8 +258,84 @@ def confirm_delivery(request,id):
         receivers.append(invoicepayee.email)
         print(receivers)
         send_email("Order Delivered", "Invoice ID #{} was Delivered to {} at {}".format(
-            invoice.invoice_id, invoice.companyB, timezone.now()),receivers)
+            invoice.invoice_id, invoice.companyB, timezone.now())+"\n\nPlease login to Waste Management System to check the invoice.", receivers)
         invoice.save()
     return redirect("invoices")
 
+def sys_list(request):
+    template_name = 'pages/settings/sys_settings.html'
+    return render(request, template_name)
+   
+def update_sys_settings(request,id=0):
+    if request.method=='POST':
+        if len(Notification.objects.all()) > 0:
+            if id > 0:
+                nsettings = Notification.objects.get(id=id)
+                if request.POST.get('send_sms'):
+                      send_sms=True
+                else:
+                   send_sms=False  
+                if request.POST.get('send_mail'):
+                    send_mail = True
+                else:
+                    send_mail = False
+                nsettings.send_sms = send_sms
+                nsettings.send_mail = send_mail
+                nsettings.save()
+                print('notification settings updated')
+        else:
+            if id == 0:
+               if request.POST.get('send_sms'):
+                  send_sms=True
+               else:
+                   send_sms=False  
+               if request.POST.get('send_mail'):
+                    send_mail = True
+               else:
+                    send_mail = False
+            Notification.objects.create(
+                send_sms=send_sms,
+                send_mail=send_mail,
+            )
+            print('notification settings added')
+            
+    return redirect('sys_list')
 
+
+def reports(request):
+    guest_user = True
+    obj = {}
+    if len(request.user.industries.all()) < 1 and request.user.is_superuser:
+        obj = waste_invoice.objects.all()
+        messages.info(
+            request, "Hi Admin, Viewing invoices for other companies?\tYou do not have any registered company yet!")
+        return render(request, "pages/reports/invoice_reports.html", {"object_list": obj, 'guest_user': guest_user})
+    elif len(request.user.industries.all()) < 1 and not request.user.is_superuser:
+        messages.info(request, "Hi {}, you\'re being redirected to home page!\tYou do not have any invoices yet!".format(
+            request.user.username))
+        return redirect("/")
+    try:
+        matching_company = request.user.industries.all()[0]
+        print(matching_company)
+    except Exception as e:
+        print(e)
+    for item in waste_invoice.objects.all():
+        if request.user == item.created_by:
+            guest_user = False
+    print("Guest User => "+str(guest_user))
+    for object in waste_invoice.objects.all():
+        if request.user == object.created_by:
+            print(object.created_by)
+            obj = waste_invoice.objects.filter(created_by=request.user)
+            print(obj)
+            return render(request, "pages/reports/invoice_reports.html", {"object_list": obj, 'guest_user': guest_user})
+        else:
+            obj = waste_invoice.objects.filter(companyB=matching_company)
+            print(request.session.get('amount'))
+            print(obj)
+        return render(request, "pages/reports/invoice_reports.html", {"object_list": obj, 'guest_user': guest_user})
+    return render(request, "pages/reports/invoice_reports.html", {"object_list": obj, 'guest_user': guest_user})
+            
+            
+       
+    

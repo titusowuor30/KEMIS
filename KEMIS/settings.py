@@ -80,6 +80,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'managemenet.context_processors.get_reusable_waste',
+                'managemenet.context_processors.get_notifiication_settings',
             ],
         },
     },

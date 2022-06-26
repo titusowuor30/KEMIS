@@ -6,12 +6,12 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1>Invoice</h1>
+          <h1>Invoices</h1>
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active">Invoice</li>
+            <li class="breadcrumb-item active">Invoices</li>
           </ol>
         </div>
       </div>
@@ -83,28 +83,8 @@
                         />
                       </td>
                       <td>
-                        <a
-                          class="list-link badge badge-secondary"
-                          href="{% url 'pay_method' object.id %}"
-                          ><i class="far fa-eye"></i
-                        ></a>
-                       <form class="d-inline" method="post" action="{% url 'delete_invoice' object.id %}">
-                        {% csrf_token %}
-                          <button type="submit"
-                            class="list-link badge badge-danger"
-                            ><i class="fa fa-trash-alt"></i>
-                          </button>
-                        </form>
-                        {% if guest_user %}
-                        <form class="d-inline">
-                          <a
-                            class="list-link badge badge-warning {% if object.status == 'Paid' or object.status == 'Rejected' %} d-none {% endif %}"
-                            href="{% url 'reject_invoice' object.id %}"
-                            ><i class="fa fa-times"></i>
-                            <span class="tooltiptext">Reject</span></a
-                          >
-                        </form>
-                        {% endif %}
+                        <a href="{% url 'invoices' %}" id="print" rel="noopener" target="_blank" class="btn btn-default">
+                            <i class="fas fa-print"></i> Print</a>
                       </td>
                     </tr>
                     {% endfor %}
@@ -133,6 +113,6 @@
 {% endblock content %} {% block pagescripts %}
 <!-- Page specific script -->
 <script>
-  document.addEventListener("click", window.print());
+  //document.querySelector("#print").addEventListener("click", window.print());
 </script>
 {% endblock pagescripts %}

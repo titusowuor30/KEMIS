@@ -104,3 +104,15 @@ class waste_invoice(models.Model):
         total += self.transportation + self.amount
         return total
     
+class Notification(models.Model):
+    send_mail=models.BooleanField(default=False)
+    send_sms=models.BooleanField(default=False)
+    
+    class Meta:
+        db_table = 'notification_settings'
+        verbose_name_plural = 'Notification Settings'
+
+    def __str__(self):
+        return "show settings"
+    
+    

@@ -61,7 +61,7 @@ def lipa_na_mpesa_online(request):
             "PartyA": body_unicode['phone'],
             "PartyB": LipanaMpesaPpassword.Business_short_code,
             "PhoneNumber": body_unicode['phone'],
-            "CallBackURL": "https://7090-105-161-91-67.in.ngrok.io/callback/",
+            "CallBackURL": "https://d453-105-161-91-67.eu.ngrok.io/callback/",
             "AccountReference": "WMS for %s" % body_unicode['invoice_id'],
             "TransactionDesc": "WMS for %s" % body_unicode['invoice_id']
         }
@@ -72,7 +72,7 @@ def lipa_na_mpesa_online(request):
     global msghead
     message = ""
     msghead = ""
-    sleep(20)
+    sleep(15)
     return redirect("display")
 
 
@@ -82,13 +82,14 @@ def MpesaCallBack(request):
         data = request.body.decode('utf-8')
         #print("callback sent:"+str(data))
         mpesa_payment = json.loads(data)
+        print(mpesa_payment)
         #print(mpesa_payment)
         result = 0
         global message
         global msghead
-        message = ""
-        msghead = ""
         if result == mpesa_payment['Body']['stkCallback']['ResultCode']:
+            message = ""
+            msghead = ""
             invoiceinfo=waste_invoice.objects.get(invoice_id=payinfo['invoice_id'])
             invoiceowner = invoiceinfo.companyA
             invoicereceiver = invoiceinfo.companyB
@@ -99,23 +100,23 @@ def MpesaCallBack(request):
             receivers.append(invoicepayee.email)
             msghead = "Invoice Payment by {}".format(invoiceinfo.companyB)
             print(msghead)
-            message = "Payment Made Successfully!\nTranasction #ID {}!".format(payinfo['invoice_id'])
+            message = "Payment Made Successfully!\nTranasction #ID {}!".format(
+                payinfo['invoice_id'])
             print(message)
             SubmitToDB(request)
             if payinfo['email']:
-                send_email(msghead, message, receivers)
+                send_email(
+                    msghead, message+"\n\nPlease login to Waste Management System to check the invoice.", receivers)
             if payinfo['sms']:
-                sendSMS(msghead,message,)  
-            message = ""
-            msghead = ""          
+                sendSMS(msghead,message,)           
         else:
+            message = ""
+            msghead = ""
             msghead = "Failed!"
             print(msghead)
             print("Payment cancelled by user")   
             message = "Request Failed!\nPayment cancelled by user!"
             displaymsg(request)
-            message = ""
-            msghead = ""
         return redirect('display')
     except Exception as e:
         print(e)

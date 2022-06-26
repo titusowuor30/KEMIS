@@ -381,20 +381,20 @@
                 </a>
                 <ul class="nav nav-treeview">
                   <li class="nav-item">
-                    <a href="./index.html" class="nav-link">
+                    <a href="{% url 'reports' %}" class="nav-link">
                       <i class="far fa-copy nav-icon"></i>
                       <p>Reports</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="./index2.html" class="nav-link">
+                    <a href="{% url 'sys_list' %}" class="nav-link">
                       <i class="fas fa-cog nav-icon"></i>
                       <p>Settings</p>
                     </a>
                   </li>
                 </ul>
               </li>
-              <li class="nav-item has-treeview">
+              <li class="nav-item has-treeview" aria-expanded="true">
                 <a href="#" class="nav-link">
                   <i class="nav-icon fas fa-tasks"></i>
                   <p>
@@ -417,7 +417,7 @@
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="pages/layout/boxed.html" class="nav-link">
+                    <a href="/" class="nav-link">
                       <i class="far fa-circle nav-icon"></i>
                       <p>Safe Dump Tips</p>
                     </a>
