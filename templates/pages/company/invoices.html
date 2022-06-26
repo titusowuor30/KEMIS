@@ -50,6 +50,7 @@
                     </tr>
                   </thead>
                   <tbody>
+                    {% if object_list %}
                     {% for object in object_list %}
                     <tr>
                       <td>{{object.weight}}</td>
@@ -60,19 +61,16 @@
                       <td>{{object.get_total_amount}}</td>
                       <td>{{object.payment_method}}</td>
                       <td>
-                          {% if object.status == 'Pending' %}
-                        <span
-                          class="badge badge-pill badge-danger"
+                        {% if object.status == 'Pending' %}
+                        <span class="badge badge-pill badge-danger"
                           >{{object.status}}</span
                         >
                         {% elif object.status == 'Paid' %}
-                         <span
-                          class="badge badge-pill badge-success"
+                        <span class="badge badge-pill badge-success"
                           >{{object.status}}</span
                         >
                         {% else %}
-                         <span
-                          class="badge badge-pill badge-warning"
+                        <span class="badge badge-pill badge-warning"
                           >{{object.status}}</span
                         >
                         {% endif %}
@@ -80,21 +78,28 @@
                       <td>
                         <input
                           type="checkbox"
-                          class="form-check-input m-auto ml-5" {% if object.delivered %}checked{% endif %}
+                          class="form-check-input m-auto ml-5"
+                          {%if object.delivered%}checked{%endif%}
                         />
                       </td>
                       <td>
-                        <a class="list-link badge badge-secondary" href="#"
+                        <a
+                          class="list-link badge badge-secondary"
+                          href="{% url 'pay_method' object.id %}"
                           ><i class="far fa-eye"></i
                         ></a>
-                        <a
-                          class="list-link badge badge-danger d-inline"
-                          href="#"
-                          ><i class="far fa-trash-alt"></i
-                        ></a>
+                       <form class="d-inline" method="post" action="{% url 'delete_invoice' object.id %}">
+                        {% csrf_token %}
+                          <button type="submit"
+                            class="list-link badge badge-danger"
+                            ><i class="fa fa-trash-alt"></i>
+                          </button>
+                        </form>
                         {% if guest_user %}
                         <form class="d-inline">
-                          <a class="list-link badge badge-warning {% if object.status == 'Paid' %} d-none {% endif %}" href="#"
+                          <a
+                            class="list-link badge badge-warning {% if object.status == 'Paid' or object.status == 'Rejected' %} d-none {% endif %}"
+                            href="{% url 'reject_invoice' object.id %}"
                             ><i class="fa fa-times"></i>
                             <span class="tooltiptext">Reject</span></a
                           >
@@ -103,6 +108,9 @@
                       </td>
                     </tr>
                     {% endfor %}
+                    {% else %}
+                    <p>You do not have any invoices yet!</p>
+                    {% endif %}
                   </tbody>
                 </table>
               </div>

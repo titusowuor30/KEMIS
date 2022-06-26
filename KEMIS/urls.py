@@ -25,6 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # waste management
     path('', home_view.as_view(), name='home'),
+    path('', include('managemenet.urls')),
     path('add-industry/', add_industry.as_view(), name='add-industry'),
     path('view-company/', company_view.as_view(), name='view-industry'),
     path('result/', result_view.as_view(), name='result'),
@@ -32,7 +33,13 @@ urlpatterns = [
     path('match-companies/<int:id>/', MatchListView, name="recycle"),
     path('recycle/<int:current_companyid>/<int:matching_companyid>/<int:waste_id>/',
          CreateInvoice, name='create_invoice'),
-    path("invoices/", invoiceListView, name='invoices')
+    path("invoices/", invoiceListView, name='invoices'),
+    path('accounts/', include('django.contrib.auth.urls')),
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# default: "Django Administration"
+admin.site.site_header = 'KEMIS Administration'
+# default: "Site administration"
+admin.site.index_title = 'Admin Area'
+admin.site.site_title = 'Administration'

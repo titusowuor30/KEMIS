@@ -17,7 +17,6 @@ import dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -37,7 +36,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = True
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', '.ngrok.io']
 
 
 # Application definition
@@ -54,7 +53,7 @@ INSTALLED_APPS = [
     'authentication',
     'managemenet',
     'srapper',
-    
+
 ]
 
 MIDDLEWARE = [
@@ -95,11 +94,11 @@ WSGI_APPLICATION = 'KEMIS.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME':'kemis',
-        'HOST':'localhost',
-        'USER':'root',
-        'PASSWORD':'root',
-        'PORT':'3307'
+        'NAME': 'kemis',
+        'HOST': 'localhost',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'PORT': '3307'
     }
 }
 
@@ -147,15 +146,15 @@ MEDIA_URL = '/media/'  # This is just for url i.e https://l.me/media/l.jpg
 # This is the folder the image will be uploaded
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-LOGIN_URL = 'signin_view'
-LOGOUT_URL = 'signin_view'
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
 
 # EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend' works with files
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'titusowuor30@gmail.com'
-EMAIL_HOST_PASSWORD = os.environ['EMAIL_USER_PASS']
+EMAIL_HOST_PASSWORD =os.environ['EMAIL_USER_PASS']
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_FILE_PATH = BASE_DIR / 'emails'
@@ -165,10 +164,23 @@ MAILCHIMP_API_KEY = os.environ['MAILCHIMP_API_KEY']
 MAILCHIMP_DATA_CENTER = os.environ['MAILCHIMP_DATA_CENTER']
 MAILCHIMP_EMAIL_LIST_ID = os.environ['MAILCHIMP_EMAIL_LIST_ID']
 
+#SMS
+SYNC_KEY = os.environ['SYNC_SMS_API_KEY']
+SYNC_SECRET = os.environ['SYNC_API_SECRET']
+TEL =  os.environ['TEL']
+
+SMS_BACKEND = 'sms.backends.messagebird.SmsBackend'
+MESSAGE_BIRD_API_KEY = os.environ['MESSAGE_BIRD_API_KEY']
+MESSAGE_BIRD_TEST_API_KEY = os.environ['MESSAGE_BIRD_TEST_API_KEY']
+
+SMS_BACKEND = 'sms.backends.twilio.SmsBackend'
+TWILIO_ACCOUNT_SID = 'live_redacted-twilio-account-sid'
+TWILIO_AUTH_TOKEN = os.environ['TEL']
+
 # Django Allauth
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    #'allauth.account.auth_backends.AuthenticationBackend'
+    # 'allauth.account.auth_backends.AuthenticationBackend'
 )
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

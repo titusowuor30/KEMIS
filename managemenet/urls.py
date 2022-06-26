@@ -1,0 +1,13 @@
+from django.urls import path, include
+from .views import *
+from .payment_views import *
+
+urlpatterns = [
+    path('payment/<int:id>/', select_pay_method, name='pay_method'),
+    path('invoice/reject/<int:id>/', reject_invoice,name="reject_invoice"),
+    path('access/token', getAccessToken, name='get_mpesa_access_token'),
+    path('online/lipa', lipa_na_mpesa_online, name='lipa_na_mpesa'),
+    path('callback/', MpesaCallBack, name='callback'),
+    path('result/', displaymsg, name='display'),
+    path('delete_invoice/<int:id>/', delete_invoice, name='delete_invoice'),
+]
