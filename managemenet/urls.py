@@ -10,4 +10,5 @@ urlpatterns = [
     path('callback/', MpesaCallBack, name='callback'),
     path('result/', displaymsg, name='display'),
     path('delete_invoice/<int:id>/', delete_invoice, name='delete_invoice'),
+    path('confirm_delivery/<int:id>/', confirm_delivery, name="confirm_delivery"),
 ]

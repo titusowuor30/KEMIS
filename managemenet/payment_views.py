@@ -72,7 +72,7 @@ def lipa_na_mpesa_online(request):
     global msghead
     message = ""
     msghead = ""
-    sleep(15)
+    sleep(20)
     return redirect("display")
 
 
@@ -89,15 +89,23 @@ def MpesaCallBack(request):
         message = ""
         msghead = ""
         if result == mpesa_payment['Body']['stkCallback']['ResultCode']:
-            msghead="Invoice Payment"
+            invoiceinfo=waste_invoice.objects.get(invoice_id=payinfo['invoice_id'])
+            invoiceowner = invoiceinfo.companyA
+            invoicereceiver = invoiceinfo.companyB
+            invoicingIndustry=Industry.objects.get(name=invoiceowner)
+            invoicepayee = Industry.objects.get(name=invoicereceiver)
+            receivers=[]
+            receivers.append(invoicingIndustry.email)
+            receivers.append(invoicepayee.email)
+            msghead = "Invoice Payment by {}".format(invoiceinfo.companyB)
             print(msghead)
             message = "Payment Made Successfully!\nTranasction #ID {}!".format(payinfo['invoice_id'])
             print(message)
             SubmitToDB(request)
             if payinfo['email']:
-                send_email(msghead,message)
+                send_email(msghead, message, receivers)
             if payinfo['sms']:
-                sendSMS(msghead,message)  
+                sendSMS(msghead,message,)  
             message = ""
             msghead = ""          
         else:
@@ -131,14 +139,14 @@ def displaymsg(request):
         print(e)
 
 
-def send_email(subject,message):
+def send_email(subject,message,receivers=[]):
     print(settings.EMAIL_HOST_USER)
     try:
         send_mail(
             subject,
             message,
             settings.EMAIL_HOST_USER,
-            ['info@tdbsoft.co.ke'],
+            receivers,
             fail_silently=False,
         )
         print('Mail Sent')

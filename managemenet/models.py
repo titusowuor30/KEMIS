@@ -103,3 +103,4 @@ class waste_invoice(models.Model):
         total = 0
         total += self.transportation + self.amount
         return total
+    

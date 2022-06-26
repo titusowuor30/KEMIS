@@ -1,4 +1,5 @@
 from urllib import request
+import django
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views import View
@@ -10,6 +11,7 @@ import secrets
 from django.contrib.auth import logout
 from django.contrib import messages
 from .payment_views import send_email,sendSMS
+from django.utils import timezone
 
 invoice_id = ""
 class home_view(View):
@@ -198,8 +200,16 @@ def CreateInvoice(request, current_companyid, matching_companyid, waste_id):
         invoice.message = request.POST.get("message")
         invoice.save()
         print(request.POST.get("cost"))
+        invoiceowner = invoice.companyA
+        invoicereceiver = invoice.companyB
+        invoicingIndustry = Industry.objects.get(name=invoiceowner)
+        invoicepayee = Industry.objects.get(name=invoicereceiver)
+        receivers = []
+        receivers.append(invoicingIndustry.email)
+        receivers.append(invoicepayee.email)
+        print(receivers)
         if request.POST.get("email") is not None:
-            send_email("New Invoice #ID {}".format(invoice_id), request.POST.get("message"))
+            send_email("New Invoice #ID {} from {} to {}".format(invoice_id,invoiceowner,invoicepayee), str(request.POST.get("message"))+"\n\nPlease login to WMS System to check the invoice.",receivers)
         if request.POST.get("sms") is not None:
             sendSMS("New Invoice #ID {}".format(invoice_id), request.POST.get("message"))
         return redirect("invoices")
@@ -215,6 +225,16 @@ def reject_invoice(request, id):
     invoice = waste_invoice.objects.get(id=id)
     invoice.status="Rejected"
     invoice.save()
+    invoiceowner = invoice.companyA
+    invoicereceiver = invoice.companyB
+    invoicingIndustry = Industry.objects.get(name=invoiceowner)
+    invoicepayee = Industry.objects.get(name=invoicereceiver)
+    receivers = []
+    receivers.append(invoicingIndustry.email)
+    receivers.append(invoicepayee.email)
+    print(receivers)
+    send_email("Invoice Rejected", "Invoice ID #{} was Rejected by {} at {}".format(
+        invoice.invoice_id, invoice.companyB, timezone.now()), receivers)
     return redirect("invoices")
 
 def delete_invoice(request,id):
@@ -222,6 +242,24 @@ def delete_invoice(request,id):
         invoice=waste_invoice.objects.get(id=id)
         print(invoice)
         invoice.delete()
+    return redirect("invoices")
+
+
+def confirm_delivery(request,id):
+    if request.method == 'POST':
+        invoice = waste_invoice.objects.get(id=id)
+        invoice.delivered=True
+        invoiceowner = invoice.companyA
+        invoicereceiver = invoice.companyB
+        invoicingIndustry = Industry.objects.get(name=invoiceowner)
+        invoicepayee = Industry.objects.get(name=invoicereceiver)
+        receivers = []
+        receivers.append(invoicingIndustry.email)
+        receivers.append(invoicepayee.email)
+        print(receivers)
+        send_email("Order Delivered", "Invoice ID #{} was Delivered to {} at {}".format(
+            invoice.invoice_id, invoice.companyB, timezone.now()),receivers)
+        invoice.save()
     return redirect("invoices")
 
 
