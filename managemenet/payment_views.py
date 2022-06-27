@@ -61,7 +61,7 @@ def lipa_na_mpesa_online(request):
             "PartyA": body_unicode['phone'],
             "PartyB": LipanaMpesaPpassword.Business_short_code,
             "PhoneNumber": body_unicode['phone'],
-            "CallBackURL": "https://d453-105-161-91-67.eu.ngrok.io/callback/",
+            "CallBackURL": "https://3267-105-161-91-67.eu.ngrok.io/callback/",
             "AccountReference": "WMS for %s" % body_unicode['invoice_id'],
             "TransactionDesc": "WMS for %s" % body_unicode['invoice_id']
         }
@@ -159,7 +159,7 @@ def send_email(subject,message,receivers=[]):
 
 def sendSMS(msghead,message):
     # 'test_gshuPaZoeEG6ovbc8M79w0QyM'  # xkMHWtkM2FBlxjYmbnc91u1la #307yPiT7RKFdqMLto2ObUn8A7
-    ACCESS_KEY = settings.MESSAGE_BIRD_TEST_API_KEY
+    ACCESS_KEY = 'btUcmsEbzKaaqQlTBTeZHfAaQ'  # settings.MESSAGE_BIRD_TEST_API_KEY
     print(ACCESS_KEY)
     try:
         # Create a MessageBird client with the specified ACCESS_KEY.
@@ -172,7 +172,7 @@ def sendSMS(msghead,message):
         msg = client.message_create(
           'WMS Center',
           '+254743793901',
-          'New Invoice Generated please login to WMS and check',
+          'New Invoice Generated please login to Waste Management System and check it',
           { 'reference' : 'Foobar' }
         )
         # Print the object information.
