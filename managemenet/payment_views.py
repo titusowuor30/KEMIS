@@ -21,13 +21,16 @@ from time import sleep
 from sinchsms import SinchSMS
 from django.core.mail import send_mail
 import messagebird
-
-
+import asyncio
 
 global message
 global msghead
-message=""
-msghead=""
+global payinfo
+message = ""
+msghead = ""
+payinfo = {}
+
+
 def getAccessToken(request):
     consumer_key = 'pl1iuAP0UJTg7iHSGWsuTwKNBXcAbZCU'
     consumer_secret = 'BUzDTBeGOO0P8HMn'
@@ -41,7 +44,7 @@ def getAccessToken(request):
     return HttpResponse(validated_mpesa_access_token)
 
 
-#@csrf_exempt
+# @csrf_exempt
 def lipa_na_mpesa_online(request):
     if request.method == 'POST':
         body_unicode = request.POST  # request.body.decode('utf-8')
@@ -61,18 +64,20 @@ def lipa_na_mpesa_online(request):
             "PartyA": body_unicode['phone'],
             "PartyB": LipanaMpesaPpassword.Business_short_code,
             "PhoneNumber": body_unicode['phone'],
-            "CallBackURL": "https://3267-105-161-91-67.eu.ngrok.io/callback/",
+            "CallBackURL": "https://a159-154-159-237-65.in.ngrok.io/callback/",
             "AccountReference": "WMS for %s" % body_unicode['invoice_id'],
             "TransactionDesc": "WMS for %s" % body_unicode['invoice_id']
         }
 
         response = requests.post(api_url, json=request, headers=headers)
-    #return HttpResponse({"CallBack Sent! ":response})
+    # return HttpResponse({"CallBack Sent! ":response})
     global message
     global msghead
     message = ""
     msghead = ""
-    sleep(15)
+    if response:
+        print(response)
+        time.sleep(15)
     return redirect("display")
 
 
@@ -80,22 +85,23 @@ def lipa_na_mpesa_online(request):
 def MpesaCallBack(request):
     try:
         data = request.body.decode('utf-8')
-        #print("callback sent:"+str(data))
+        print("callback sent:"+str(data))
         mpesa_payment = json.loads(data)
         print(mpesa_payment)
-        #print(mpesa_payment)
+        print(mpesa_payment)
         result = 0
         global message
         global msghead
         if result == mpesa_payment['Body']['stkCallback']['ResultCode']:
             message = ""
             msghead = ""
-            invoiceinfo=waste_invoice.objects.get(invoice_id=payinfo['invoice_id'])
+            invoiceinfo = waste_invoice.objects.get(
+                invoice_id=payinfo['invoice_id'])
             invoiceowner = invoiceinfo.companyA
             invoicereceiver = invoiceinfo.companyB
-            invoicingIndustry=Industry.objects.get(name=invoiceowner)
+            invoicingIndustry = Industry.objects.get(name=invoiceowner)
             invoicepayee = Industry.objects.get(name=invoicereceiver)
-            receivers=[]
+            receivers = []
             receivers.append(invoicingIndustry.email)
             receivers.append(invoicepayee.email)
             msghead = "Invoice Payment by {}".format(invoiceinfo.companyB)
@@ -104,17 +110,17 @@ def MpesaCallBack(request):
                 payinfo['invoice_id'])
             print(message)
             SubmitToDB(request)
-            if payinfo['email']:
+            if "email" in payinfo:
                 send_email(
                     msghead, message+"\n\nPlease login to Waste Management System to check the invoice.", receivers)
-            if payinfo['sms']:
-                sendSMS(msghead,message,)           
+            if "sms" in payinfo:
+                sendSMS(msghead, message,)
         else:
             message = ""
             msghead = ""
             msghead = "Failed!"
             print(msghead)
-            print("Payment cancelled by user")   
+            print("Payment cancelled by user")
             message = "Request Failed!\nPayment cancelled by user!"
             displaymsg(request)
         return redirect('display')
@@ -125,22 +131,23 @@ def MpesaCallBack(request):
 def SubmitToDB(request):
     try:
         print(payinfo)
-        invoice=waste_invoice.objects.get(invoice_id=payinfo['invoice_id'])
+        invoice = waste_invoice.objects.get(invoice_id=payinfo['invoice_id'])
         print(invoice)
-        invoice.status="Paid"
+        invoice.status = "Paid"
         invoice.save()
         displaymsg(request)
     except Exception as e:
         print(e)
-    
+
+
 def displaymsg(request):
     try:
-       return render(request, "pages/result/payinfo.html", {'message': message, 'msghead': msghead})
+        return render(request, "pages/result/payinfo.html", {'message': message, 'msghead': msghead})
     except Exception as e:
         print(e)
 
 
-def send_email(subject,message,receivers=[]):
+def send_email(subject, message, receivers=[]):
     print(settings.EMAIL_HOST_USER)
     try:
         send_mail(
@@ -152,12 +159,12 @@ def send_email(subject,message,receivers=[]):
         )
         print('Mail Sent')
     except Exception as e:
-        print(e)    
-    
+        print(e)
+
 # function for sending SMS
 
 
-def sendSMS(msghead,message):
+def sendSMS(msghead, message):
     # 'test_gshuPaZoeEG6ovbc8M79w0QyM'  # xkMHWtkM2FBlxjYmbnc91u1la #307yPiT7RKFdqMLto2ObUn8A7
     ACCESS_KEY = 'btUcmsEbzKaaqQlTBTeZHfAaQ'  # settings.MESSAGE_BIRD_TEST_API_KEY
     print(ACCESS_KEY)
@@ -167,13 +174,13 @@ def sendSMS(msghead,message):
         # Send a new message.
         print(msghead)
         print(message)
-        number=settings.TEL
+        number = settings.TEL
         print(settings.TEL)
         msg = client.message_create(
-          'WMS Center',
-          '+254743793901',
-          'New Invoice Generated please login to Waste Management System and check it',
-          { 'reference' : 'Foobar' }
+            'WMS Center',
+            '+254743793901',
+            'New Invoice Generated please login to Waste Management System and check it',
+            {'reference': 'Foobar'}
         )
         # Print the object information.
         print('\nThe following information was returned as a Message object:\n')
